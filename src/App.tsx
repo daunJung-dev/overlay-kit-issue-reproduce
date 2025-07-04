@@ -6,6 +6,18 @@ type DialogProps = {
 	close: () => void;
 };
 
+function openOuterDialog() {
+	overlay.open(({ isOpen, close }) => (
+		<OuterDialog isOpen={isOpen} close={close} />
+	));
+}
+
+function openInnerDialog() {
+	overlay.open(({ isOpen, close }) => (
+		<InnerDialog isOpen={isOpen} close={close} />
+	));
+}
+
 function InnerDialog({ isOpen, close }: DialogProps) {
 	return (
 		<Dialog.Root open={isOpen} onOpenChange={close}>
@@ -24,6 +36,9 @@ function InnerDialog({ isOpen, close }: DialogProps) {
 					}}
 				>
 					<div>Inner Dialog (Radix)</div>
+					<button onClick={openOuterDialog} type="button">
+						Open Outer Dialog
+					</button>
 					<Dialog.Close onClick={close}>Close Inner</Dialog.Close>
 				</Dialog.Content>
 			</Dialog.Portal>
@@ -49,14 +64,7 @@ function OuterDialog({ isOpen, close }: DialogProps) {
 					}}
 				>
 					<div>Outer Dialog (Radix)</div>
-					<button
-						onClick={() =>
-							overlay.open(({ isOpen, close }) => (
-								<InnerDialog isOpen={isOpen} close={close} />
-							))
-						}
-						type="button"
-					>
+					<button onClick={openInnerDialog} type="button">
 						Open Inner Dialog (via overlay-kit)
 					</button>
 					<Dialog.Close onClick={close}>Close Outer</Dialog.Close>
@@ -69,17 +77,9 @@ function OuterDialog({ isOpen, close }: DialogProps) {
 export default function App() {
 	return (
 		<OverlayProvider>
-			<button
-				onClick={() =>
-					overlay.open(({ isOpen, close }) => (
-						<OuterDialog isOpen={isOpen} close={close} />
-					))
-				}
-				type="button"
-			>
+			<button onClick={openOuterDialog} type="button">
 				Open Outer Dialog
 			</button>
-			{/* overlay-kit이 관리하는 오버레이들이 OverlayProvider 아래에 쌓임 */}
 		</OverlayProvider>
 	);
 }
